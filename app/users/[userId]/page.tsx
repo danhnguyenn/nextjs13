@@ -5,6 +5,7 @@ import { Post } from "@/app/models/Post";
 import React, { Suspense } from "react";
 import UserPosts from "./components/UserPost";
 import { Metadata } from "next";
+import { getAllUsers } from "@/app/lib";
 
 export interface PostDetailProps {
   params: {
@@ -39,4 +40,11 @@ export default async function PostDetail({
       </Suspense>
     </>
   );
+}
+
+export async function generateStaticParams() {
+  const usersData: Promise<User[]> = getAllUsers();
+  const users = await usersData;
+
+  return users.map((user) => ({ userId: user.id.toString() }));
 }
