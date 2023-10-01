@@ -6,6 +6,7 @@ import React, { Suspense } from "react";
 import UserPosts from "./components/UserPost";
 import { Metadata } from "next";
 import { getAllUsers } from "@/app/lib";
+import { notFound } from "next/navigation";
 
 export interface PostDetailProps {
   params: {
@@ -18,6 +19,13 @@ export async function generateMetadata({
 }: PostDetailProps): Promise<Metadata> {
   const userData: Promise<User> = getUser(userId);
   const user: User = await userData;
+
+  if (!user) {
+    return {
+      title: "User not found",
+    };
+  }
+
   return {
     title: user.name,
     description: `This is the page of ${user.name}`,
@@ -32,6 +40,11 @@ export default async function PostDetail({
   //const [user, userPosts] = await Promise.all([userData, userPostData]);
 
   const user = await userData;
+
+  if (!user) {
+    return notFound();
+  }
+
   return (
     <>
       <h2>{user.name}</h2>
